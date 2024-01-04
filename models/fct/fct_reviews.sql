@@ -1,18 +1,16 @@
 {{
-    config(
-        materialized = 'incremental',
-        on_shcema_change = 'fail'
-    )
-    
+ config(
+ materialized = 'incremental',
+ on_schema_change='fail'
+ )
 }}
 
-with src_reviews as 
-(    
-    select * from {{ ref('src_reviews') }}
+WITH src_reviews AS (
+ SELECT * FROM {{ ref('src_reviews') }}
 )
 
-select * from src_reviews
-where review_txt is not null
+SELECT * FROM src_reviews
+WHERE review_text is not null
 {% if is_incremental() %}
-    and review_date > (select max(review_date) from {{this}} )
+ AND review_date > (select max(review_date) from {{ this }})
 {% endif %}
